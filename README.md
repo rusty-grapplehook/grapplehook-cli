@@ -10,7 +10,7 @@ The pipeline:
 
 1. **Download** - yt-dlp fetches the best video + audio and merges them (into
    `.mp4`, `.webm`, or `.mkv`, whichever fits the codecs).
-2. **Transcode** *(optional, `--mp4`)* - ffmpeg converts that to H.264/AAC `.mp4`.
+2. **Transcode** _(optional, `--mp4`)_ - ffmpeg converts that to H.264/AAC `.mp4`.
    Streams that are already H.264 / AAC are **copied** (fast, lossless); VP9, AV1,
    or Opus are **re-encoded**.
 
@@ -25,7 +25,7 @@ The pipeline:
 - **yt-dlp** on your `PATH` (or set `YTDLP_PATH`)
 - **ffmpeg** (and **ffprobe**, which ships with it) on your `PATH` - needed to
   merge HD tracks and for the `--mp4` transcode
-- **aria2c** *(recommended)* on your `PATH` (or set `ARIA2C_PATH`) - used
+- **aria2c** _(recommended)_ on your `PATH` (or set `ARIA2C_PATH`) - used
   automatically when present to get past YouTube's per-connection throttling.
   Without it, downloads fall back to yt-dlp's native downloader, which is much
   slower on YouTube (see [Speeding up downloads](#speeding-up-downloads)).
@@ -85,20 +85,20 @@ npm start -- "https://youtu.be/dQw4w9WgXcQ" --audio
 
 ### Options
 
-| Flag              | Description                                                        | Default        |
-| ----------------- | ----------------------------------------------------------------- | -------------- |
-| `-o, --output`    | Output directory                                                  | current dir    |
-| `-q, --quality`   | `best`, `worst`, or a max height like `2160p` / `1080p` / `720p`  | `best`         |
-| `-a, --audio`     | Download audio only (native format)                               | off            |
-| `-m, --muxed`     | Single combined stream - skip merging (fast, lower res)           | off            |
-| `--mp4`           | Transcode result to H.264/AAC `.mp4` (copies if already compatible)| off           |
-| `--crf <n>`       | x264 quality for `--mp4`; lower = better/larger (0–51)            | `18`           |
-| `--preset <p>`    | x264 preset for `--mp4`: `ultrafast` … `veryslow`                 | `medium`       |
-| `--connections <n>`| Parallel connections/fragments to beat throttling (1–64)         | `8`            |
-| `--aria2c`        | Force the aria2c downloader (auto-used if installed)              | auto           |
-| `--no-aria2c`     | Force yt-dlp's native downloader                                  | off            |
-| `-n, --name`      | Custom filename (without extension)                               | video title    |
-| `-h, --help`      | Show help                                                         |                |
+| Flag                | Description                                                         | Default     |
+| ------------------- | ------------------------------------------------------------------- | ----------- |
+| `-o, --output`      | Output directory                                                    | current dir |
+| `-q, --quality`     | `best`, `worst`, or a max height like `2160p` / `1080p` / `720p`    | `best`      |
+| `-a, --audio`       | Download audio only (native format)                                 | off         |
+| `-m, --muxed`       | Single combined stream - skip merging (fast, lower res)             | off         |
+| `--mp4`             | Transcode result to H.264/AAC `.mp4` (copies if already compatible) | off         |
+| `--crf <n>`         | x264 quality for `--mp4`; lower = better/larger (0–51)              | `18`        |
+| `--preset <p>`      | x264 preset for `--mp4`: `ultrafast` … `veryslow`                   | `medium`    |
+| `--connections <n>` | Parallel connections/fragments to beat throttling (1–64)            | `8`         |
+| `--aria2c`          | Force the aria2c downloader (auto-used if installed)                | auto        |
+| `--no-aria2c`       | Force yt-dlp's native downloader                                    | off         |
+| `-n, --name`        | Custom filename (without extension)                                 | video title |
+| `-h, --help`        | Show help                                                           |             |
 
 ## About `--mp4`
 
@@ -107,7 +107,7 @@ avoid a lossy re-encode, but many editors want `.mp4` (H.264). `--mp4` normalize
 the output to H.264/AAC `.mp4`.
 
 It applies at **every resolution**, uniformly - the transcode step decides copy vs.
-re-encode from the source *codec*, not the resolution:
+re-encode from the source _codec_, not the resolution:
 
 - If the downloaded stream is already **H.264 + AAC**, ffmpeg just **remuxes** it
   into `.mp4` - instant and lossless.
@@ -137,7 +137,7 @@ few hundred kB/s. Install it once:
 - macOS: `brew install aria2` · Debian/Ubuntu: `sudo apt install aria2` ·
   Windows: `winget install aria2.aria2`
 
-yt-dlp's **native `-N`** (concurrent *fragments*) is left as the fallback, but note
+yt-dlp's **native `-N`** (concurrent _fragments_) is left as the fallback, but note
 it barely helps YouTube: these streams are a single byte-range URL, not many DASH
 fragments, so there's nothing for `-N` to parallelize. That's why `--connections`
 alone (without aria2c) won't move the needle on YouTube.
@@ -151,7 +151,7 @@ npm start -- "https://youtu.be/<id>" --no-aria2c
 ```
 
 `--connections` feeds aria2c's `-x`/`-s` (or `-N` in native mode). If speeds are
-*still* low with aria2c, it's your own bandwidth or an IP YouTube is rate-limiting;
+_still_ low with aria2c, it's your own bandwidth or an IP YouTube is rate-limiting;
 4–16 connections is the sweet spot (very high counts can trigger more throttling).
 Set `ARIA2C_PATH` if aria2c isn't on your `PATH`.
 
@@ -183,7 +183,7 @@ type-check, and a CLI smoke test across Node 18/20/22. Publishing is automated b
 
 One-time setup:
 
-1. Create an **npm access token** with publish rights (an *Automation* token if
+1. Create an **npm access token** with publish rights (an _Automation_ token if
    your account uses 2FA): npmjs.com → Access Tokens → Generate New Token.
 2. Add it to the repo as a secret named **`NPM_TOKEN`**: GitHub → Settings →
    Secrets and variables → Actions → New repository secret.
@@ -210,7 +210,7 @@ release → pick the tag → Publish). The workflow checks that the tag matches
 
 ## Project structure
 
-```
+```text
 grapplehook-cli/
 ├── .github/workflows/
 │   ├── ci.yml          # build + type-check + smoke test on push/PR
