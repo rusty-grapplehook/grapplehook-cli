@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build output (generated in CI before publish)
+dist/
+
+# Default download directory
+downloads/
+
+# Logs / debug
+*.log
+npm-debug.log*
+
+# Env / secrets
+.env
+.env.*
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

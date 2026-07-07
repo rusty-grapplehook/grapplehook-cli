@@ -1,0 +1,55 @@
+{
+  "name": "grapplehook-cli",
+  "version": "0.1.0",
+  "description": "Download videos from the command line (yt-dlp + ffmpeg + aria2c), with an optional editor-friendly mp4 transcode.",
+  "type": "module",
+  "bin": {
+    "grapplehook": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "youtube",
+    "youtube-downloader",
+    "yt-dlp",
+    "ffmpeg",
+    "aria2c",
+    "cli",
+    "mp4",
+    "transcode",
+    "video",
+    "downloader"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/<your-username>/grapplehook-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/<your-username>/grapplehook-cli/issues"
+  },
+  "homepage": "https://github.com/<your-username>/grapplehook-cli#readme",
+  "author": "<your name>",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "grapplehook-core": "file:../grapplehook-core"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}
