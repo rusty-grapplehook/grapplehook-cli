@@ -7,7 +7,7 @@ import { attachProgress } from "./progress-renderer.js";
 
 function printHelp(): void {
   console.log(`
-${color.bold("grapplehook")} — download videos by URL (via yt-dlp)
+${color.bold("grapplehook")} - download videos by URL (via yt-dlp)
 
 By default it downloads the best video and best audio and merges them, so you
 get full resolution. Add --mp4 to convert the result to editor-friendly mp4.
@@ -19,7 +19,7 @@ ${color.bold("Options:")}
   -o, --output <dir>     Output directory (default: current directory)
   -q, --quality <q>      best | worst | a max height like 2160p / 1080p / 720p (default: best)
   -a, --audio            Download audio only (native format, usually .m4a)
-  -m, --muxed            Single combined stream — skip merging (fast, lower res)
+  -m, --muxed            Single combined stream - skip merging (fast, lower res)
       --mp4              Transcode to H.264/AAC .mp4 at ANY resolution (re-encodes VP9/AV1)
       --crf <n>          x264 quality for --mp4, lower = better/larger (default: 18)
       --preset <p>       x264 preset for --mp4: ultrafast … veryslow (default: medium)

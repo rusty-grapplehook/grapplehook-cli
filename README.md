@@ -3,29 +3,29 @@
 A command-line app that downloads a YouTube video (or its audio) from a URL, with
 an optional second stage that transcodes the result to an editor-friendly `.mp4`.
 It's a TypeScript wrapper around [**yt-dlp**](https://github.com/yt-dlp/yt-dlp)
-(download), **ffmpeg** (transcode), and — when installed —
+(download), **ffmpeg** (transcode), and - when installed -
 [**aria2**](https://aria2.github.io/) for fast, parallel downloads.
 
 The pipeline:
 
-1. **Download** — yt-dlp fetches the best video + audio and merges them (into
+1. **Download** - yt-dlp fetches the best video + audio and merges them (into
    `.mp4`, `.webm`, or `.mkv`, whichever fits the codecs).
-2. **Transcode** *(optional, `--mp4`)* — ffmpeg converts that to H.264/AAC `.mp4`.
+2. **Transcode** *(optional, `--mp4`)* - ffmpeg converts that to H.264/AAC `.mp4`.
    Streams that are already H.264 / AAC are **copied** (fast, lossless); VP9, AV1,
    or Opus are **re-encoded**.
 
 > **Please note:** Downloading YouTube content is governed by YouTube's Terms of
 > Service and by copyright law. Use this only for videos you have the right to
-> download — your own uploads, Creative Commons content, or videos where you
+> download - your own uploads, Creative Commons content, or videos where you
 > have the creator's permission.
 
 ## Requirements
 
 - **Node.js 18 or newer**
 - **yt-dlp** on your `PATH` (or set `YTDLP_PATH`)
-- **ffmpeg** (and **ffprobe**, which ships with it) on your `PATH` — needed to
+- **ffmpeg** (and **ffprobe**, which ships with it) on your `PATH` - needed to
   merge HD tracks and for the `--mp4` transcode
-- **aria2c** *(recommended)* on your `PATH` (or set `ARIA2C_PATH`) — used
+- **aria2c** *(recommended)* on your `PATH` (or set `ARIA2C_PATH`) - used
   automatically when present to get past YouTube's per-connection throttling.
   Without it, downloads fall back to yt-dlp's native downloader, which is much
   slower on YouTube (see [Speeding up downloads](#speeding-up-downloads)).
@@ -54,7 +54,7 @@ Or run it without installing:
 npx grapplehook-cli "https://youtu.be/<id>"
 ```
 
-The npm package is only the CLI — you still need yt-dlp, ffmpeg, and aria2c
+The npm package is only the CLI - you still need yt-dlp, ffmpeg, and aria2c
 installed as described above. In the usage examples below, `npm start -- <args>`
 is the run-from-source form; the installed equivalent is `grapplehook <args>`.
 
@@ -90,7 +90,7 @@ npm start -- "https://youtu.be/dQw4w9WgXcQ" --audio
 | `-o, --output`    | Output directory                                                  | current dir    |
 | `-q, --quality`   | `best`, `worst`, or a max height like `2160p` / `1080p` / `720p`  | `best`         |
 | `-a, --audio`     | Download audio only (native format)                               | off            |
-| `-m, --muxed`     | Single combined stream — skip merging (fast, lower res)           | off            |
+| `-m, --muxed`     | Single combined stream - skip merging (fast, lower res)           | off            |
 | `--mp4`           | Transcode result to H.264/AAC `.mp4` (copies if already compatible)| off           |
 | `--crf <n>`       | x264 quality for `--mp4`; lower = better/larger (0–51)            | `18`           |
 | `--preset <p>`    | x264 preset for `--mp4`: `ultrafast` … `veryslow`                 | `medium`       |
@@ -106,21 +106,21 @@ Why it's needed: yt-dlp keeps high-resolution VP9/AV1 streams in `.webm`/`.mkv` 
 avoid a lossy re-encode, but many editors want `.mp4` (H.264). `--mp4` normalizes
 the output to H.264/AAC `.mp4`.
 
-It applies at **every resolution**, uniformly — the transcode step decides copy vs.
+It applies at **every resolution**, uniformly - the transcode step decides copy vs.
 re-encode from the source *codec*, not the resolution:
 
 - If the downloaded stream is already **H.264 + AAC**, ffmpeg just **remuxes** it
-  into `.mp4` — instant and lossless.
+  into `.mp4` - instant and lossless.
 - Otherwise (**VP9 / AV1 / Opus**, which is what YouTube uses for most quality
   tiers), it **re-encodes** to H.264/AAC using your `--crf` and `--preset`.
 
 So in practice `--mp4` re-encodes at essentially every resolution, and your `--crf`
-/ `--preset` take effect throughout — a 1080p clip is handled the same way as a 4K
+/ `--preset` take effect throughout - a 1080p clip is handled the same way as a 4K
 one, just faster. Re-encoding is CPU-heavy (most so at 4K); use a faster `--preset`
 or cap with `-q` if it's too slow.
 
 Two caveats: re-encoding to H.264 can produce large files (raise `--crf` to shrink
-them), and **HDR** sources aren't tone-mapped — they're converted to 8-bit SDR
+them), and **HDR** sources aren't tone-mapped - they're converted to 8-bit SDR
 as-is, which can look flat. HDR grading is out of scope here.
 
 ## Speeding up downloads
@@ -131,7 +131,7 @@ multiple connections.
 
 **aria2c is what actually works here, and it's used automatically when installed.**
 It splits the stream's single URL across several connections (`-x`/`-s`, capped at
-16), bypassing the per-connection throttle — typically several MB/s instead of a
+16), bypassing the per-connection throttle - typically several MB/s instead of a
 few hundred kB/s. Install it once:
 
 - macOS: `brew install aria2` · Debian/Ubuntu: `sudo apt install aria2` ·
@@ -189,13 +189,13 @@ One-time setup:
    Secrets and variables → Actions → New repository secret.
 3. Fill in `name`, `repository`, `author`, and `license` in `package.json`, and
    your details in `LICENSE`.
-4. Generate and commit a lockfile — `npm install`, then commit
+4. Generate and commit a lockfile - `npm install`, then commit
    `package-lock.json`. CI uses `npm ci`, which requires it.
 
 Cutting a release:
 
 ```bash
-npm version patch        # or minor / major — bumps package.json and tags the commit
+npm version patch        # or minor / major - bumps package.json and tags the commit
 git push --follow-tags
 ```
 
