@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Node ${{ matrix.node }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # Matrix values must be arrays — a bare scalar here fails workflow parsing.
+        node: [24]
+        os: [ubuntu-latest]
+        include:
+          # The CLI is a thin wrapper, but arg parsing / SIGINT handling and
+          # the progress renderer touch the terminal, so exercise all OSes.
+          - node: 24
+            os: macos-latest
+          - node: 24
+            os: windows-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build (tsc → dist)
+        run: pnpm run build
+
+      - name: Smoke test (--help exits 0, no args exits 1)
+        shell: bash
+        run: |
+          node dist/index.js --help
+          if node dist/index.js; then
+            echo "Expected non-zero exit with no arguments" >&2
+            exit 1
+          fi
+          echo "smoke OK"
+
+      - name: Verify publish contents
+        shell: bash
+        run: |
+          pnpm pack --pack-destination "$RUNNER_TEMP"
+          cd "$RUNNER_TEMP"
+          TARBALL=$(ls grapplehook-cli-*.tgz)
+          echo "Inspecting $TARBALL"
+          CONTENTS=$(tar -tf "$TARBALL")
+          echo "$CONTENTS"
+          for f in dist/index.js dist/progress-renderer.js dist/utils.js; do
+            if ! grep -q "package/$f" <<< "$CONTENTS"; then
+              echo "Missing $f in publish tarball" >&2
+              exit 1
+            fi
+          done
+          if grep -E "package/(src/|tsconfig|eslint)" <<< "$CONTENTS"; then
+            echo "Unexpected files in publish tarball" >&2
+            exit 1
+          fi
+          echo "pack OK"
