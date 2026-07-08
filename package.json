@@ -1,6 +1,6 @@
 {
   "name": "grapplehook-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Download videos from the command line (yt-dlp + ffmpeg + aria2c), with an optional editor-friendly mp4 transcode.",
   "type": "module",
   "bin": {
