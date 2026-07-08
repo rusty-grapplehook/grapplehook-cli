@@ -36,19 +36,20 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/<your-username>/grapplehook-cli.git"
+    "url": "git+https://github.com/rusty-grapplehook/grapplehook-cli.git"
   },
   "bugs": {
-    "url": "https://github.com/<your-username>/grapplehook-cli/issues"
+    "url": "https://github.com/rusty-grapplehook/grapplehook-cli/issues"
   },
-  "homepage": "https://github.com/<your-username>/grapplehook-cli#readme",
-  "author": "<your name>",
+  "homepage": "https://github.com/rusty-grapplehook/grapplehook-cli#readme",
+  "author": "kitsupanic",
   "license": "MIT",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "dependencies": {
-    "grapplehook-core": "file:../grapplehook-core"
+    "grapplehook-core": "^0.1.4"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -14,6 +14,13 @@ The pipeline:
    Streams that are already H.264 / AAC are **copied** (fast, lossless); VP9, AV1,
    or Opus are **re-encoded**.
 
+The heavy lifting - building and running yt-dlp/ffmpeg/aria2c, structured
+progress events, and cancellation - lives in
+[`grapplehook-core`](https://www.npmjs.com/package/grapplehook-core), a
+framework-agnostic package shared with the
+[desktop GUI](https://github.com/rusty-grapplehook/grapplehook-ui). This repo
+is the thin terminal front-end: argument parsing and a progress-bar renderer.
+
 > **Please note:** Downloading YouTube content is governed by YouTube's Terms of
 > Service and by copyright law. Use this only for videos you have the right to
 > download - your own uploads, Creative Commons content, or videos where you
@@ -21,7 +28,7 @@ The pipeline:
 
 ## Requirements
 
-- **Node.js 18 or newer**
+- **Node.js 24 or newer**
 - **yt-dlp** on your `PATH` (or set `YTDLP_PATH`)
 - **ffmpeg** (and **ffprobe**, which ships with it) on your `PATH` - needed to
   merge HD tracks and for the `--mp4` transcode
@@ -98,7 +105,17 @@ npm start -- "https://youtu.be/dQw4w9WgXcQ" --audio
 | `--aria2c`          | Force the aria2c downloader (auto-used if installed)                | auto        |
 | `--no-aria2c`       | Force yt-dlp's native downloader                                    | off         |
 | `-n, --name`        | Custom filename (without extension)                                 | video title |
+| `--verbose`         | Stream raw yt-dlp/ffmpeg output instead of the progress bar         | off         |
 | `-h, --help`        | Show help                                                           |             |
+
+By default the CLI renders a single clean progress bar covering both stages
+(download, then transcode if `--mp4` is on). Pass `--verbose` to see the raw
+yt-dlp/ffmpeg output instead - useful for debugging format or throttling
+issues.
+
+**Cancelling:** press `Ctrl+C` once to cancel gracefully - subprocesses are
+tree-killed and partial files are cleaned up. Press it a second time to force
+an immediate exit.
 
 ## About `--mp4`
 
@@ -178,7 +195,7 @@ node dist/index.js "https://youtu.be/dQw4w9WgXcQ" --mp4
 ## Releasing (maintainers)
 
 CI (`.github/workflows/ci.yml`) runs on every push and PR to `main`: build,
-type-check, and a CLI smoke test across Node 18/20/22. Publishing is automated by
+type-check, and a CLI smoke test on Node 24. Publishing is automated by
 `.github/workflows/publish.yml` and runs when you publish a GitHub Release.
 
 One-time setup:
@@ -187,9 +204,7 @@ One-time setup:
    your account uses 2FA): npmjs.com → Access Tokens → Generate New Token.
 2. Add it to the repo as a secret named **`NPM_TOKEN`**: GitHub → Settings →
    Secrets and variables → Actions → New repository secret.
-3. Fill in `name`, `repository`, `author`, and `license` in `package.json`, and
-   your details in `LICENSE`.
-4. Generate and commit a lockfile - `npm install`, then commit
+3. Generate and commit a lockfile - `npm install`, then commit
    `package-lock.json`. CI uses `npm ci`, which requires it.
 
 Cutting a release:
@@ -213,15 +228,17 @@ release → pick the tag → Publish). The workflow checks that the tag matches
 ```text
 grapplehook-cli/
 ├── .github/workflows/
-│   ├── ci.yml          # build + type-check + smoke test on push/PR
-│   └── publish.yml     # publish to npm on GitHub Release
+│   ├── ci.yml                  # build + type-check + smoke test on push/PR
+│   └── publish.yml             # publish to npm on GitHub Release
 ├── package.json
 ├── tsconfig.json
 ├── LICENSE
 ├── README.md
 └── src/
-    ├── index.ts        # CLI: parses args, calls the downloader
-    ├── downloader.ts   # stage 1: builds/runs yt-dlp; orchestrates the pipeline
-    ├── transcode.ts    # stage 2: ffprobe + ffmpeg → H.264/AAC mp4
-    └── utils.ts        # ANSI color helper
+    ├── index.ts                # CLI entry: parses args, calls grapplehook-core's download()
+    ├── progress-renderer.ts    # renders the two-stage progress bar from task events
+    └── utils.ts                # ANSI color helper
 ```
+
+The download/transcode pipeline itself lives in
+[`grapplehook-core`](https://github.com/rusty-grapplehook/grapplehook-core).
